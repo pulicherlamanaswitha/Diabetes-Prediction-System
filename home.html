@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diabetes Predictor</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#4facfe,#00f2fe);
+}
+
+.container{
+    width:400px;
+    background:white;
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.2);
+    animation:fadeIn 0.8s ease;
+}
+
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(30px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+h1{
+    text-align:center;
+    color:#333;
+    margin-bottom:25px;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    margin-bottom:15px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    font-size:16px;
+}
+
+button{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:10px;
+    background:#2196f3;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    background:#1976d2;
+}
+
+#result{
+    margin-top:20px;
+    text-align:center;
+    font-size:20px;
+    font-weight:bold;
+}
+
+.success{
+    color:green;
+}
+
+.danger{
+    color:red;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🩺 Diabetes Predictor</h1>
+
+    <input type="number" id="glucose" placeholder="Enter Glucose Level">
+
+    <input type="number" id="bmi" placeholder="Enter BMI Value">
+
+    <button onclick="predictDiabetes()">Predict</button>
+
+    <div id="result"></div>
+</div>
+
+<script>
+async function predictDiabetes(){
+
+    let glucose=document.getElementById("glucose").value;
+    let bmi=document.getElementById("bmi").value;
+
+    if(glucose==="" || bmi===""){
+        alert("Please fill all fields");
+        return;
+    }
+
+    let response=await fetch("/predict",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+            Glucose:Number(glucose),
+            BMI:Number(bmi)
+        })
+    });
+
+    let data=await response.json();
+
+    let result=document.getElementById("result");
+
+    if(data.prediction==="having disease"){
+        result.className="danger";
+        result.innerHTML="⚠️ High Risk of Diabetes";
+    }
+    else{
+        result.className="success";
+        result.innerHTML="✅ No Diabetes Detected";
+    }
+}
+</script>
+
+</body>
+</html>
